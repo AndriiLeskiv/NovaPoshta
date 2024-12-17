@@ -1,62 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
 <?php
-function getWarehousesByCity($cityName = '') {
-    $apiKey = 'b263e1660bf1f031f0b4b1b9fb391bf1';
-    $url = 'https://api.novaposhta.ua/v2.0/json/';
-
-    // Крок 1: Отримуємо CityRef для міста
-    $cityData = [
-        'apiKey' => $apiKey,
-        'modelName' => 'Address',
-        'calledMethod' => 'getCities',
-        'methodProperties' => [
-            'FindByString' => $cityName
-        ]
-    ];
-
-    $options = [
-        'http' => [
-            'header'  => "Content-type: application/json\r\n",
-            'method'  => 'POST',
-            'content' => json_encode($cityData),
-        ],
-    ];
-
-    $context = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
-    $response = json_decode($result, true);
-
-    if (!$response['success'] || empty($response['data'])) {
-        return [
-            'success' => false,
-            'error' => 'City not found'
-        ];
-    }
-
-    // Крок 2: Отримуємо CityRef
-    $cityRef = $response['data'][0]['Ref'];
-
-    // Крок 3: Отримуємо відділення для цього міста в одному запиті
-    $result = file_get_contents($url, false, stream_context_create([
-        'http' => [
-            'header'  => "Content-type: application/json\r\n",
-            'method'  => 'POST',
-            'content' => json_encode([
-                'apiKey' => $apiKey,
-                'modelName' => 'Address',
-                'calledMethod' => 'getWarehouses',
-                'methodProperties' => ['CityRef' => $cityRef]
-            ]),
-        ],
-    ]));
-
-    return json_decode($result, true);
-}
-
-$warehouses = getWarehousesByCity();
-header('Content-Type: application/json');
-//echo json_encode($warehouses);
-
-print_r($warehouses);
 
 
+//$result = getInfoByCityName('Львів');
+//echo '<pre>';
+//print_r($result);
+//echo '</pre>';
 ?>
+
+<input type="text" id="cityName" placeholder="Enter city name">
+<button id="searchButton">Search</button>
+
+
+
+<form id="shipmentForm" action="">
+    <h3>Sender Information</h3>
+    <label for="senderName">Name:</label>
+    <input type="text" id="senderName" required><br>
+
+    <label for="senderPhone">Phone:</label>
+    <input type="text" id="senderPhone" required><br>
+
+    <label for="senderEmail">Email:</label>
+    <input type="email" id="senderEmail" required><br>
+
+    <h3>Recipient Information</h3>
+    <label for="recipientName">Name:</label>
+    <input type="text" id="recipientName" required><br>
+
+    <label for="recipientPhone">Phone:</label>
+    <input type="text" id="recipientPhone" required><br>
+
+    <label for="recipientEmail">Email:</label>
+    <input type="email" id="recipientEmail" required><br>
+
+    <h3>Shipment Details</h3>
+    <label for="citySender">City (Sender):</label>
+    <input type="text" id="citySender" required><br>
+
+    <label for="cityRecipient">City (Recipient):</label>
+    <input type="text" id="cityRecipient" required><br>
+
+    <label for="cargoDescription">Cargo Description:</label>
+    <textarea id="cargoDescription" required></textarea><br>
+
+    <label for="cargoWeight">Cargo Weight (kg):</label>
+    <input type="number" id="cargoWeight" required><br>
+
+    <label for="cargoDimensions">Cargo Dimensions (LxWxH):</label>
+    <input type="text" id="cargoDimensions" placeholder="e.g., 30x20x15" required><br>
+
+    <label for="cargoInsurance">Insurance Value:</label>
+    <input type="number" id="cargoInsurance" placeholder="e.g., 5000" required><br>
+
+    <button type="button" id="createShipmentButton">Create Shipment</button>
+</form>
+<script src="js/main.js"></script>
+</body>
+</html>
