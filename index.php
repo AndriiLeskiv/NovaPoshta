@@ -8,14 +8,6 @@
     <title>Document</title>
 </head>
 <body>
-<?php
-
-
-//$result = getInfoByCityName('Львів');
-//echo '<pre>';
-//print_r($result);
-//echo '</pre>';
-?>
 
 <input type="text" id="cityName" placeholder="Enter city name">
 <button id="searchButton">Search</button>
